@@ -27,3 +27,6 @@ dependencies = [
     "tiktoken>=0.12.0",
     "trafilatura>=2.0.0",
 ]
+
+[tool.uv]
+package = false
