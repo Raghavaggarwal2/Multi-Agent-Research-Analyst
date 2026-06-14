@@ -709,8 +709,8 @@ html("""
 
 with st.sidebar:
     st.markdown("### Settings")
-    ollama_api_key = st.text_input("Ollama API Key", type="password", placeholder="Enter your Ollama API Key...")
-    st.markdown("[Get Ollama API Key](https://ollama.com/)")
+    groq_api_key = st.text_input("Groq API Key", type="password", placeholder="Enter your Groq API Key...")
+    st.markdown("[Get Groq API Key](https://console.groq.com/keys)")
 
 _, col, _ = st.columns([1, 2.5, 1])
 with col:
@@ -724,8 +724,8 @@ with col:
 st.markdown("<br>", unsafe_allow_html=True)
 
 if run_btn:
-    if not ollama_api_key.strip():
-        html('<div class="error-banner">⚠ Please enter your Ollama API Key in the sidebar.</div>')
+    if not groq_api_key.strip():
+        html('<div class="error-banner">⚠ Please enter your Groq API Key in the sidebar.</div>')
     elif not topic.strip():
         html('<div class="error-banner">⚠ Please enter a research topic to continue.</div>')
     else:
@@ -741,6 +741,6 @@ if run_btn:
             </span>
         </div>
         """)
-        run_pipeline_with_ui(topic, ollama_api_key)
+        run_pipeline_with_ui(topic, groq_api_key)
 
 html('<div class="lumina-footer">Lumina Research &nbsp;·&nbsp; Powered by AI Agents</div>')

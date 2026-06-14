@@ -60,6 +60,6 @@ def run_research_pipeline(topic: str, api_key: str) -> dict:
 
 
 if __name__ == "__main__":
-    api_key = input("\n Enter your Ollama API Key: ")
+    api_key = input("\n Enter your Groq API Key: ")
     topic = input("\n Enter a research topic: ")
     run_research_pipeline(topic, api_key)

@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def get_llm(api_key: str):
-    return ChatOllama(model="gpt-oss:120b-cloud", api_key=api_key, temperature=0)
+    return ChatGroq(model="openai/gpt-oss-120b", api_key=api_key, temperature=0)
 
 
 # first agent
