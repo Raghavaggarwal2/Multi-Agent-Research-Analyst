@@ -13,27 +13,27 @@ This project implements an autonomous research workflow that processes a user-de
 
 ## Features
 
-- **Multi-Agent Architecture**: Built using LangChain's `create_agent` and LCEL (LangChain Expression Language) pipelines.
+- **Multi-Agent Architecture**: Built using LangChain agents and LCEL (LangChain Expression Language) pipelines.
 - **Dual Interfaces**: 
-  - **Streamlit App (`app.py`)**: A modern, visually appealing web interface with real-time pipeline progress tracking, expandable intermediate results, and a text download option for the final report.
-  - **CLI Pipeline (`pipeline.py`)**: A command-line interface to execute the research pipeline directly from the terminal.
+  - **Streamlit App (`app.py`)**: A premium, beautifully styled web interface featuring a dynamic sidebar, real-time pipeline progress tracking, expandable intermediate results, and elegant typography for the final markdown report.
+  <!-- - **CLI Pipeline (`pipeline.py`)**: A command-line interface to execute the research pipeline directly from the terminal. -->
 - **Custom Tools**: Includes dedicated tools (`web_search` and `scrape_tool`) for information retrieval and content extraction.
-- **LLM Integration**: Currently configured to run with `ChatOllama` (defaulting to the `gemma4:31b-cloud` model), with scaffolding in place for MistralAI and Groq integrations.
+- **LLM Integration**: Powered exclusively by **Groq** (`ChatGroq`) for blazing fast agentic reasoning. The application accepts the Groq API key securely at runtime via the UI or CLI prompts.
 
 ## Project Structure
 
 - `app.py`: Streamlit frontend application with custom CSS styling and UI pipeline tracking.
 - `pipeline.py`: The core sequential pipeline logic that executes the agents and chains step-by-step.
-- `agents.py`: Definitions for the Search and Reader agents, as well as the Writer and Critic LCEL chains.
+- `agents.py`: Definitions for the Search and Reader agents, as well as the Writer and Critic LCEL chains using Groq.
 - `tools.py`: Tool definitions for web searching (TavilyClient) and webpage scraping (Requests & BeautifulSoup).
-- `main.py`: Project entry point stub.
 
 ## Getting Started
 
 ### Prerequisites
 
 - Python 3.12 or higher.
-- API Keys for Tavily and your chosen LLM provider (e.g., Ollama, Mistral, Groq).
+- A **Tavily API Key** (for web searching).
+- A **Groq API Key** (provided dynamically when running the app).
 
 ### Installation
 
@@ -43,12 +43,9 @@ This project implements an autonomous research workflow that processes a user-de
    ```
    *(Note: A `uv.lock` is also present if you prefer using `uv` for dependency management).*
 
-2. Create a `.env` file in the root directory and add your API keys:
+2. Create a `.env` file in the root directory to store your background tools key:
    ```env
    TAVILY_API_KEY=your_tavily_api_key
-   OLLAMA_API_KEY=your_ollama_api_key
-   # MISTRALAI_API_KEY=your_mistral_api_key
-   # GROQ_API_KEY=your_groq_api_key
    ```
 
 ### Usage
@@ -57,8 +54,10 @@ This project implements an autonomous research workflow that processes a user-de
 ```bash
 streamlit run app.py
 ```
+*(You will be prompted to enter your Groq API Key securely in the sidebar).*
 
 **Run via Command Line:**
 ```bash
 python pipeline.py
 ```
+*(The terminal will ask you for your Groq API Key and research topic before executing).*
