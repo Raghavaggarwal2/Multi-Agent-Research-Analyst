@@ -1,12 +1,12 @@
-from agents import build_search_agent, build_reader_agent, writer_chain, critic_chain
+from agents import build_search_agent, build_reader_agent, get_writer_chain, get_critic_chain
 from rich import print
 
 
-def run_research_pipeline(topic: str) -> dict:
+def run_research_pipeline(topic: str, api_key: str) -> dict:
     state = {}
 
     # search agent
-    search_agent = build_search_agent()
+    search_agent = build_search_agent(api_key)
     print("\n=== Running Search Agent ===")
     search_result = search_agent.invoke({
         "messages": [("user", f"Find recent, reliable, detailed and relevant information on the topic: {topic}")]
@@ -17,7 +17,7 @@ def run_research_pipeline(topic: str) -> dict:
     print(state["search_result"])
 
     # reader agent
-    reader_agent = build_reader_agent()
+    reader_agent = build_reader_agent(api_key)
     print("\n=== Running Reader Agent ===")
     reader_result = reader_agent.invoke({
         "messages": [("user",
@@ -38,6 +38,7 @@ def run_research_pipeline(topic: str) -> dict:
         f"Deep Reading:\n{state['reader_result']}"
     )
 
+    writer_chain = get_writer_chain(api_key)
     state["report"] = writer_chain.invoke({
         "topic": topic,
         "research": research_combined
@@ -48,6 +49,7 @@ def run_research_pipeline(topic: str) -> dict:
     # critic chain
     print("\n=== Running Critic Chain ===")
 
+    critic_chain = get_critic_chain(api_key)
     state["feedback"] = critic_chain.invoke({
         "report": state["report"]
     })
@@ -58,5 +60,6 @@ def run_research_pipeline(topic: str) -> dict:
 
 
 if __name__ == "__main__":
+    api_key = input("\n Enter your Ollama API Key: ")
     topic = input("\n Enter a research topic: ")
-    run_research_pipeline(topic)
+    run_research_pipeline(topic, api_key)

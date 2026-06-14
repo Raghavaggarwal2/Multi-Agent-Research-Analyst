@@ -10,17 +10,13 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-mistralai_api_key = os.getenv("MISTRALAI_API_KEY")
-groq_api_key = os.getenv("GROQ_API_KEY")
-ollama_api_key = os.getenv("OLLAMA_API_KEY")
-
-# llm = ChatMistralAI(model="mistral-large-latest", api_key=mistralai_api_key, temperature=0)
-# llm = ChatGroq(model="openai/gpt-oss-120b", groq_api_key=groq_api_key)
-llm = ChatOllama(model="gemma4:31b-cloud", api_key=ollama_api_key, temperature=0)
+def get_llm(api_key: str):
+    return ChatOllama(model="gpt-oss:120b-cloud", api_key=api_key, temperature=0)
 
 
 # first agent
-def build_search_agent():
+def build_search_agent(api_key: str):
+    llm = get_llm(api_key)
     return create_agent(
         model=llm,
         tools=[web_search],
@@ -34,7 +30,8 @@ def build_search_agent():
 
 
 # second agent
-def build_reader_agent():
+def build_reader_agent(api_key: str):
+    llm = get_llm(api_key)
     return create_agent(
         model=llm,
         tools=[scrape_tool],
@@ -75,7 +72,8 @@ writer_prompt = ChatPromptTemplate.from_messages([
     """)
 ])
 
-writer_chain = writer_prompt | llm | StrOutputParser()
+def get_writer_chain(api_key: str):
+    return writer_prompt | get_llm(api_key) | StrOutputParser()
 
 # critic chain
 critic_prompt = ChatPromptTemplate.from_messages([
@@ -101,4 +99,5 @@ One line verdict:
 ..."""),
 ])
 
-critic_chain = critic_prompt | llm | StrOutputParser()
+def get_critic_chain(api_key: str):
+    return critic_prompt | get_llm(api_key) | StrOutputParser()

@@ -7,7 +7,7 @@ st.set_page_config(
     page_title="Lumina Research",
     page_icon="🔭",
     layout="wide",
-    initial_sidebar_state="collapsed",
+    initial_sidebar_state="expanded",
 )
 
 # ─── Custom CSS ─────────────────────────────────────────────────────────────
@@ -25,8 +25,38 @@ html, body, [class*="css"] {
     color: #e8e6e1;
 }
 
+/* ── Sidebar ── */
+[data-testid="stSidebar"] {
+    background: #0f1117 !important;
+    border-right: 1px solid #1e2128 !important;
+}
+[data-testid="stSidebar"] h3 {
+    font-family: 'DM Mono', monospace !important;
+    font-size: 0.8rem !important;
+    letter-spacing: 0.2em !important;
+    text-transform: uppercase !important;
+    color: #c9a96e !important;
+    margin-bottom: 1.5rem !important;
+}
+[data-testid="stSidebar"] p {
+    font-family: 'DM Sans', sans-serif !important;
+    color: #9ca3af !important;
+}
+[data-testid="stSidebar"] a {
+    color: #c9a96e !important;
+    font-family: 'DM Mono', monospace !important;
+    font-size: 0.75rem !important;
+    letter-spacing: 0.05em !important;
+    text-decoration: none !important;
+    transition: color 0.2s ease !important;
+}
+[data-testid="stSidebar"] a:hover {
+    color: #e0be85 !important;
+}
+
 /* ── Hide Streamlit chrome ── */
-#MainMenu, footer, header { visibility: hidden; }
+#MainMenu, footer { visibility: hidden; }
+header { background: transparent !important; }
 .block-container { padding: 2.5rem 3rem 4rem; max-width: 1100px; }
 
 /* ── Hero header ── */
@@ -84,6 +114,17 @@ html, body, [class*="css"] {
 .stTextInput > div > div:focus-within {
     border-color: #c9a96e !important;
     box-shadow: 0 0 0 1px #c9a96e22 !important;
+}
+.stTextInput div[data-baseweb="input"] {
+    border: none !important;
+    box-shadow: none !important;
+    background-color: transparent !important;
+}
+.stTextInput div[data-baseweb="input"]:focus-within {
+    box-shadow: none !important;
+}
+.stTextInput div[data-baseweb="base-input"] {
+    background-color: transparent !important;
 }
 .stTextInput label {
     font-family: 'DM Mono', monospace !important;
@@ -305,14 +346,28 @@ html, body, [class*="css"] {
 .report-body {
     padding: 2rem;
     font-family: 'DM Sans', sans-serif;
-    font-size: 0.92rem;
+    font-size: 0.95rem;
     line-height: 1.85;
     color: #d6d2cb;
-    white-space: pre-wrap;
+    white-space: normal;
     word-break: break-word;
-    max-height: 520px;
+    max-height: 600px;
     overflow-y: auto;
 }
+.report-body h1, .report-body h2, .report-body h3 {
+    font-family: 'Cormorant Garamond', serif;
+    color: #e0be85;
+    margin-top: 1.8rem;
+    margin-bottom: 0.8rem;
+    font-weight: 400;
+}
+.report-body h1 { font-size: 2rem; }
+.report-body h2 { font-size: 1.6rem; border-bottom: 1px solid #c9a96e22; padding-bottom: 0.3rem; }
+.report-body h3 { font-size: 1.3rem; }
+.report-body p { margin-bottom: 1rem; color: #d6d2cb; }
+.report-body ul, .report-body ol { margin-left: 1.5rem; margin-bottom: 1.5rem; color: #d6d2cb; }
+.report-body li { margin-bottom: 0.4rem; }
+.report-body strong { color: #f0ece4; font-weight: 500; }
 .report-body::-webkit-scrollbar { width: 4px; }
 .report-body::-webkit-scrollbar-track { background: #0c0f14; }
 .report-body::-webkit-scrollbar-thumb { background: #c9a96e44; border-radius: 2px; }
@@ -337,16 +392,29 @@ html, body, [class*="css"] {
     color: #818cf8;
 }
 .critique-body {
-    padding: 1.3rem 1.5rem;
+    padding: 1.5rem 1.8rem;
     font-family: 'DM Sans', sans-serif;
-    font-size: 0.88rem;
+    font-size: 0.92rem;
     line-height: 1.75;
     color: #c9c5be;
-    white-space: pre-wrap;
+    white-space: normal;
     word-break: break-word;
-    max-height: 380px;
+    max-height: 450px;
     overflow-y: auto;
 }
+.critique-body h1, .critique-body h2, .critique-body h3 {
+    font-family: 'DM Mono', monospace;
+    color: #a5b4fc;
+    margin-top: 1.5rem;
+    margin-bottom: 0.6rem;
+    text-transform: uppercase;
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+}
+.critique-body p { margin-bottom: 0.8rem; }
+.critique-body ul, .critique-body ol { margin-left: 1.5rem; margin-bottom: 1rem; }
+.critique-body li { margin-bottom: 0.3rem; }
+.critique-body strong { color: #e0e7ff; }
 .critique-body::-webkit-scrollbar { width: 4px; }
 .critique-body::-webkit-scrollbar-track { background: #0c0e14; }
 .critique-body::-webkit-scrollbar-thumb { background: #818cf844; border-radius: 2px; }
@@ -411,7 +479,7 @@ def html(content: str):
 
 
 # ─── Pipeline wrapper that yields progress ──────────────────────────────────
-def run_pipeline_with_ui(topic: str):
+def run_pipeline_with_ui(topic: str, api_key: str):
     """
     Runs the full pipeline and streams results back via
     Streamlit placeholders. Preserves all original logic.
@@ -459,7 +527,7 @@ def run_pipeline_with_ui(topic: str):
 
     try:
         from agents import build_search_agent
-        search_agent = build_search_agent()
+        search_agent = build_search_agent(api_key)
         search_result_raw = search_agent.invoke({
             "messages": [("user", f"Find recent, reliable, detailed and relevant information on the topic: {topic}")]
         })
@@ -498,7 +566,7 @@ def run_pipeline_with_ui(topic: str):
 
     try:
         from agents import build_reader_agent
-        reader_agent = build_reader_agent()
+        reader_agent = build_reader_agent(api_key)
         reader_result_raw = reader_agent.invoke({
             "messages": [("user",
                 f"Based on the following search results about: {topic}, "
@@ -540,7 +608,8 @@ def run_pipeline_with_ui(topic: str):
         time.sleep(0.5)
 
     try:
-        from agents import writer_chain
+        from agents import get_writer_chain
+        writer_chain = get_writer_chain(api_key)
         research_combined = (
             f"Search Results:\n{state['search_result']}\n\n"
             f"Deep Reading:\n{state['reader_result']}"
@@ -560,10 +629,10 @@ def run_pipeline_with_ui(topic: str):
     render_track()
 
     html(
-        f'<div class="report-card">'
+        f'<div class="report-card">\n'
         f'<div class="report-header"><span>📋</span>'
-        f'<span class="report-title">Generated Research Report</span></div>'
-        f'<div class="report-body">{state["report"]}</div>'
+        f'<span class="report-title">Generated Research Report</span></div>\n'
+        f'<div class="report-body">\n\n{state["report"]}\n\n</div>\n'
         f'</div>'
     )
 
@@ -597,7 +666,8 @@ def run_pipeline_with_ui(topic: str):
         time.sleep(0.5)
 
     try:
-        from agents import critic_chain
+        from agents import get_critic_chain
+        critic_chain = get_critic_chain(api_key)
         state["feedback"] = critic_chain.invoke({"report": state["report"]})
     except Exception as e:
         critic_ph.markdown(f'<div class="error-banner">⚠ Critic chain failed: {e}</div>', unsafe_allow_html=True)
@@ -610,9 +680,9 @@ def run_pipeline_with_ui(topic: str):
     render_track()
 
     html(
-        f'<div class="critique-card">'
-        f'<div class="critique-header">🔬 &nbsp; Expert Critique & Feedback</div>'
-        f'<div class="critique-body">{state["feedback"]}</div>'
+        f'<div class="critique-card">\n'
+        f'<div class="critique-header">🔬 &nbsp; Expert Critique & Feedback</div>\n'
+        f'<div class="critique-body">\n\n{state["feedback"]}\n\n</div>\n'
         f'</div>'
     )
 
@@ -637,6 +707,11 @@ html("""
 </div>
 """)
 
+with st.sidebar:
+    st.markdown("### Settings")
+    ollama_api_key = st.text_input("Ollama API Key", type="password", placeholder="Enter your Ollama API Key...")
+    st.markdown("[Get Ollama API Key](https://ollama.com/)")
+
 _, col, _ = st.columns([1, 2.5, 1])
 with col:
     topic = st.text_input(
@@ -649,7 +724,9 @@ with col:
 st.markdown("<br>", unsafe_allow_html=True)
 
 if run_btn:
-    if not topic.strip():
+    if not ollama_api_key.strip():
+        html('<div class="error-banner">⚠ Please enter your Ollama API Key in the sidebar.</div>')
+    elif not topic.strip():
         html('<div class="error-banner">⚠ Please enter a research topic to continue.</div>')
     else:
         html(f"""
@@ -664,6 +741,6 @@ if run_btn:
             </span>
         </div>
         """)
-        run_pipeline_with_ui(topic)
+        run_pipeline_with_ui(topic, ollama_api_key)
 
 html('<div class="lumina-footer">Lumina Research &nbsp;·&nbsp; Powered by AI Agents</div>')
